@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taste & Plan &bull; Menu Planner Editoriale & Casuale</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F7F4EE; color: #2C2621; }
+    h1, h2, h3, .editorial-font { font-family: 'Playfair Display', serif; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.35s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .parchment-card { background: #FFFFFF; border: 1px solid #EBE4D8; box-shadow: 0 10px 30px -5px rgba(44, 38, 33, 0.04); transition: all 0.25s ease; }
+    .parchment-card:hover { border-color: #D4C5AD; transform: translateY(-2px); }
+    .editorial-input { background: #FAF7F2; border: 1px solid #EBE4D8; color: #2C2621; transition: all 0.2s; }
+    .editorial-input:focus { border-color: #2C2621; outline: none; background: #FFFFFF; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-[#2C2621] selection:text-white">
+
+  <!-- Header Editoriale -->
+  <header class="bg-[#FAF7F2] border-b border-[#EBE4D8] sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="switchTab('home')">
+        <div class="w-10 h-10 rounded-full bg-[#2C2621] text-[#FAF7F2] flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+          <i data-lucide="utensils" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-[#2C2621] editorial-font italic">Taste & Plan</h1>
+          <p class="text-[10px] tracking-widest uppercase text-[#8C7A6B] font-semibold">Weekly Menu & Market List</p>
+        </div>
+      </div>
+      
+      <!-- Nav Tabs -->
+      <nav class="flex bg-[#EBE4D8]/60 p-1 rounded-full gap-1 overflow-x-auto max-w-full border border-[#D4C5AD]/40">
+        <button onclick="switchTab('home')" id="btn-home" class="tab-btn px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 bg-[#2C2621] text-[#FAF7F2] shadow-sm">
+          Panoramica
+        </button>
+        <button onclick="switchTab('calendar')" id="btn-calendar" class="tab-btn px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 text-[#5C4E42] hover:text-[#2C2621]">
+          Settimana
+        </button>
+        <button onclick="switchTab('recipes')" id="btn-recipes" class="tab-btn px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 text-[#5C4E42] hover:text-[#2C2621]">
+          Ricettario (<span id="recipe-count">0</span>)
+        </button>
+        <button onclick="switchTab('goals')" id="btn-goals" class="tab-btn px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 text-[#5C4E42] hover:text-[#2C2621]">
+          Fabbisogno
+        </button>
+        <button onclick="switchTab('shopping')" id="btn-shopping" class="tab-btn px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 text-[#5C4E42] hover:text-[#2C2621]">
+          Spesa
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-6xl mx-auto px-6 py-10 flex-1 w-full space-y-16">
+
+    <!-- 0. HOME / PANORAMICA -->
+    <div id="tab-home" class="tab-content active space-y-16">
+      
+      <!-- Hero Section Dinamica -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center parchment-card p-8 sm:p-14 rounded-[2.5rem] relative overflow-hidden">
+        <div class="lg:col-span-7 space-y-6">
+          <span class="inline-block bg-[#FAF7F2] text-[#5C4E42] border border-[#EBE4D8] text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full" id="daily-badge">
+            Pensiero del Giorno
+          </span>
+          <h2 class="text-3xl sm:text-5xl font-normal text-[#2C2621] tracking-tight editorial-font italic leading-tight" id="daily-quote">
+            "La cucina è un linguaggio in cui la sincerità si mescola all'amore."
+          </h2>
+          <p class="text-sm sm:text-base text-[#6E5E52] leading-relaxed max-w-lg">
+            Organizza la tua settimana con un menu bilanciato o genera un menu casuale con un semplice clic tra le 200+ ricette disponibili.
+          </p>
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            <button onclick="fillRandomWeek()" class="px-7 py-3.5 bg-[#8C7A6B] hover:bg-[#726253] text-[#FAF7F2] font-bold text-xs uppercase tracking-widest rounded-full shadow-md transition-all flex items-center gap-2">
+              <i data-lucide="shuffle" class="w-4 h-4"></i> Genera Menu Casuale
+            </button>
+            <button onclick="switchTab('calendar')" class="px-7 py-3.5 bg-[#2C2621] hover:bg-[#423830] text-[#FAF7F2] font-bold text-xs uppercase tracking-widest rounded-full shadow-md transition-all flex items-center gap-2">
+              Visualizza Settimana <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 flex justify-center relative">
+          <div class="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-[#FAF7F2] p-4 shadow-xl flex items-center justify-center border border-[#EBE4D8]">
+            <img src="https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=80" alt="Cucina" class="w-full h-full object-cover rounded-full shadow-inner">
+            <div class="absolute -bottom-2 -left-2 bg-[#2C2621] text-[#FAF7F2] text-xs font-bold px-4 py-2 rounded-2xl shadow-md border border-[#FAF7F2]/10 flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> Casual & Smart
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sezione Piatti in Evidenza -->
+      <div class="space-y-8">
+        <div class="text-center space-y-2">
+          <span class="text-[10px] tracking-widest uppercase text-[#8C7A6B] font-bold">Dalla Nostra Libreria</span>
+          <h3 class="text-3xl font-normal text-[#2C2621] editorial-font italic">Specialità Consigliate</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="parchment-card p-6 rounded-[2rem] flex items-center gap-6">
+            <img src="https://images.unsplash.com/photo-1633383718590-3606d7d59fdb?auto=format&fit=crop&w=300&q=80" alt="Carbonara" class="w-28 h-28 object-cover rounded-2xl shadow-sm">
+            <div class="space-y-2 flex-1">
+              <span class="text-xs font-bold text-[#8C7A6B] uppercase tracking-wider">Primo Piatto</span>
+              <h4 class="text-lg font-bold text-[#2C2621] editorial-font">Spaghetti alla Carbonara</h4>
+              <p class="text-xs text-[#6E5E52] line-clamp-2">Spaghetti, Guanciale, Uova fresche, Pecorino romano, Pepe nero.</p>
+            </div>
+          </div>
+
+          <div class="parchment-card p-6 rounded-[2rem] flex items-center gap-6">
+            <img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=300&q=80" alt="Orata" class="w-28 h-28 object-cover rounded-2xl shadow-sm">
+            <div class="space-y-2 flex-1">
+              <span class="text-xs font-bold text-[#8C7A6B] uppercase tracking-wider">Secondo Piatto</span>
+              <h4 class="text-lg font-bold text-[#2C2621] editorial-font">Orata al Cartoccio</h4>
+              <p class="text-xs text-[#6E5E52] line-clamp-2">Orata intera, Pomodorini ciliegino, Olive taggiasche, Vino bianco.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. CALENDAR TAB -->
+    <div id="tab-calendar" class="tab-content space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 parchment-card p-6 rounded-[2rem]">
+        <div>
+          <h2 class="text-2xl font-normal text-[#2C2621] editorial-font italic">Pianificazione Settimanale</h2>
+          <p class="text-xs text-[#6E5E52]">Gestisci pranzi e cene definendo i commensali o genera un menu casuale in un click.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2 bg-[#FAF7F2] px-3.5 py-2 rounded-2xl border border-[#EBE4D8]">
+            <span class="text-xs font-bold text-[#5C4E42] flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5"></i> Commensali:</span>
+            <input type="number" id="global-servings" min="1" max="20" value="2" onchange="updateGlobalServings(this.value)" class="w-12 text-center text-xs font-bold editorial-input rounded-xl py-1">
+          </div>
+          <button onclick="fillRandomWeek()" class="px-4 py-2.5 bg-[#8C7A6B] hover:bg-[#726253] text-[#FAF7F2] text-xs font-bold rounded-2xl transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="shuffle" class="w-3.5 h-3.5"></i> Menu Casuale
+          </button>
+          <button onclick="loadDefaultBalancedWeek()" class="px-4 py-2.5 bg-[#FAF7F2] hover:bg-[#EBE4D8] text-[#2C2621] text-xs font-bold rounded-2xl border border-[#EBE4D8] transition">
+            Ripristina Base
+          </button>
+          <button onclick="clearWeek()" class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-2xl border border-rose-200 transition">
+            Svuota
+          </button>
+        </div>
+      </div>
+
+      <div id="calendar-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Generato via JS -->
+      </div>
+    </div>
+
+    <!-- 2. RECIPES TAB -->
+    <div id="tab-recipes" class="tab-content space-y-6">
+      <div class="parchment-card p-6 rounded-[2rem] space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-normal text-[#2C2621] editorial-font italic">Ricettario 200+ & Dosi Base</h2>
+            <p class="text-xs text-[#6E5E52]">Libreria completa di ricette tradizionali con dosi per il calcolo spesa</p>
+          </div>
+          <div class="flex gap-2 w-full sm:w-auto">
+            <button onclick="openRecipeModal()" class="flex-1 sm:flex-none px-5 py-3 bg-[#2C2621] hover:bg-[#423830] text-[#FAF7F2] text-xs font-bold rounded-2xl shadow-md transition flex items-center justify-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i> Nuova Ricetta
+            </button>
+            <button onclick="openBulkModal()" class="flex-1 sm:flex-none px-5 py-3 bg-[#FAF7F2] hover:bg-[#EBE4D8] text-[#2C2621] text-xs font-bold rounded-2xl border border-[#EBE4D8] transition flex items-center justify-center gap-2">
+              <i data-lucide="file-text" class="w-4 h-4"></i> Inserisci in Blocco
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 absolute left-4 top-3.5 text-[#8C7A6B]"></i>
+            <input type="text" id="recipe-search" oninput="renderRecipes()" placeholder="Cerca tra le 200+ ricette..." class="w-full pl-11 pr-4 py-3 editorial-input rounded-2xl text-sm">
+          </div>
+          <select id="recipe-category-filter" onchange="renderRecipes()" class="px-4 py-3 editorial-input rounded-2xl text-sm font-medium">
+            <option value="all">Tutte le categorie</option>
+            <option value="Primo">Primo</option>
+            <option value="Secondo">Secondo</option>
+            <option value="Piatto Unico">Piatto Unico</option>
+            <option value="Contorno">Contorno</option>
+            <option value="Altro">Altro / Dolce</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="recipes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Generato via JS -->
+      </div>
+    </div>
+
+    <!-- 3. GOALS TAB -->
+    <div id="tab-goals" class="tab-content space-y-6">
+      <div class="parchment-card p-8 rounded-[2rem] space-y-6">
+        <div>
+          <h2 class="text-2xl font-normal text-[#2C2621] editorial-font italic">Fabbisogno Settimanale</h2>
+          <p class="text-xs text-[#6E5E52]">Configura lo stile alimentare e monitora il consumo di carne, pesce e legumi</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="p-5 bg-[#FAF7F2] border border-[#EBE4D8] rounded-2xl space-y-2">
+            <label class="text-xs font-bold text-[#2C2621] uppercase tracking-wider block">Stile Alimentare</label>
+            <select id="goal-period-phase" onchange="saveGoalsSettings()" class="w-full p-3 editorial-input rounded-xl text-sm font-semibold">
+              <option value="Equilibrato">Mediterraneo Bilanciato</option>
+              <option value="Carb-Load">Ricco di Energia (Carboidrati)</option>
+              <option value="High-Protein">Proteico / Più Carne</option>
+              <option value="Fish-Week">Prevalenza Pesce</option>
+              <option value="Detox">Leggero & Detox</option>
+            </select>
+            <p class="text-xs text-[#6E5E52]" id="goal-phase-desc">Bilanciamento ideale di carboidrati complessi e verdure.</p>
+          </div>
+
+          <div class="p-5 bg-[#FAF7F2] border border-[#EBE4D8] rounded-2xl space-y-2">
+            <label class="text-xs font-bold text-[#2C2621] uppercase tracking-wider block">Consumo Carne (pasti)</label>
+            <input type="number" id="goal-meat-target" min="0" max="14" value="4" onchange="saveGoalsSettings()" class="w-full p-3 editorial-input rounded-xl text-sm font-semibold">
+            <p class="text-xs text-[#6E5E52]">Pasti massimi consigliati.</p>
+          </div>
+
+          <div class="p-5 bg-[#FAF7F2] border border-[#EBE4D8] rounded-2xl space-y-2">
+            <label class="text-xs font-bold text-[#2C2621] uppercase tracking-wider block">Consumo Pesce (pasti)</label>
+            <input type="number" id="goal-fish-target" min="0" max="14" value="3" onchange="saveGoalsSettings()" class="w-full p-3 editorial-input rounded-xl text-sm font-semibold">
+            <p class="text-xs text-[#6E5E52]">Pasti desiderati di pesce.</p>
+          </div>
+
+          <div class="p-5 bg-[#FAF7F2] border border-[#EBE4D8] rounded-2xl space-y-2">
+            <label class="text-xs font-bold text-[#2C2621] uppercase tracking-wider block">Consumo Legumi (pasti)</label>
+            <input type="number" id="goal-legume-target" min="0" max="14" value="3" onchange="saveGoalsSettings()" class="w-full p-3 editorial-input rounded-xl text-sm font-semibold">
+            <p class="text-xs text-[#6E5E52]">Pasti ideali a base di legumi.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="parchment-card p-8 rounded-[2rem] space-y-4">
+        <h3 class="text-xl font-normal text-[#2C2621] editorial-font italic flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-[#2C2621]"></i> Analisi in Tempo Reale
+        </h3>
+        <div id="goals-analysis-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Generato via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SHOPPING TAB -->
+    <div id="tab-shopping" class="tab-content space-y-6">
+      <div class="parchment-card p-8 rounded-[2rem] space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-normal text-[#2C2621] editorial-font italic">Lista della Spesa Automatica</h2>
+            <p class="text-xs text-[#6E5E52]">Quantità ricalcolate proporzionalmente in base ai commensali dei piatti pianificati</p>
+          </div>
+          <div class="flex gap-2 w-full sm:w-auto">
+            <button onclick="clearCheckedShopping()" class="px-4 py-2.5 bg-[#FAF7F2] hover:bg-[#EBE4D8] text-[#2C2621] text-xs font-bold rounded-2xl border border-[#EBE4D8] transition">
+              Rimuovi spuntati
+            </button>
+            <button onclick="clearAllShopping()" class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-2xl border border-rose-200 transition">
+              Svuota extra
+            </button>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <input type="text" id="manual-shopping-input" placeholder="Aggiungi articolo extra (es. 2 litri di Latte...)" class="flex-1 px-4 py-3 editorial-input rounded-2xl text-sm">
+          <button onclick="addManualShoppingItem()" class="px-6 py-3 bg-[#2C2621] hover:bg-[#423830] text-[#FAF7F2] font-bold text-sm rounded-2xl shadow-md transition flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Aggiungi
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="parchment-card p-6 rounded-[2rem] space-y-4">
+          <h3 class="font-bold text-sm text-[#2C2621] flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-[#8C7A6B]"></i> Ingredienti dai Piatti (Dosi Ricalcolate)
+          </h3>
+          <div id="auto-shopping-list" class="space-y-2">
+            <!-- Generato via JS -->
+          </div>
+        </div>
+
+        <div class="parchment-card p-6 rounded-[2rem] space-y-4">
+          <h3 class="font-bold text-sm text-[#2C2621] flex items-center gap-2">
+            <i data-lucide="list-plus" class="w-4 h-4 text-[#8C7A6B]"></i> Articoli Aggiunti Manualmente
+          </h3>
+          <div id="manual-shopping-list" class="space-y-2">
+            <!-- Generato via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Recipe Modal -->
+  <div id="recipe-modal" class="fixed inset-0 bg-[#2C2621]/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="parchment-card rounded-[2rem] max-w-lg w-full p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center">
+        <h3 id="recipe-modal-title" class="text-xl font-normal text-[#2C2621] editorial-font italic">Nuova Ricetta</h3>
+        <button onclick="closeRecipeModal()" class="text-[#8C7A6B] hover:text-[#2C2621]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="recipe-form" onsubmit="saveRecipe(event)" class="space-y-4">
+        <input type="hidden" id="recipe-edit-index" value="-1">
+        <div>
+          <label class="block text-xs font-bold text-[#5C4E42] mb-1">Nome del Piatto *</label>
+          <input type="text" id="recipe-name" required placeholder="es. Spaghetti alla Carbonara" class="w-full px-4 py-3 editorial-input rounded-2xl text-sm">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-[#5C4E42] mb-1">Categoria *</label>
+            <select id="recipe-category" class="w-full px-4 py-3 editorial-input rounded-2xl text-sm font-medium">
+              <option value="Primo">Primo</option>
+              <option value="Secondo">Secondo</option>
+              <option value="Piatto Unico">Piatto Unico</option>
+              <option value="Contorno">Contorno</option>
+              <option value="Altro">Altro / Dolce</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#5C4E42] mb-1">Dosi Base per (persone) *</label>
+            <input type="number" id="recipe-base-servings" min="1" max="20" value="4" required class="w-full px-4 py-3 editorial-input rounded-2xl text-sm font-medium">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-[#5C4E42] mb-1">Ingredienti con quantità (es. 320g Spaghetti, 150g Guanciale) *</label>
+          <textarea id="recipe-ingredients" rows="3" required placeholder="es. 320g Spaghetti, 150g Guanciale, 4 Uova" class="w-full px-4 py-3 editorial-input rounded-2xl text-sm"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeRecipeModal()" class="px-5 py-3 bg-[#FAF7F2] hover:bg-[#EBE4D8] text-[#2C2621] text-xs font-bold rounded-2xl border border-[#EBE4D8] transition">Annulla</button>
+          <button type="submit" class="px-6 py-3 bg-[#2C2621] hover:bg-[#423830] text-[#FAF7F2] text-xs font-bold rounded-2xl shadow-md transition">Salva Ricetta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bulk Import Modal -->
+  <div id="bulk-modal" class="fixed inset-0 bg-[#2C2621]/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="parchment-card rounded-[2rem] max-w-2xl w-full p-8 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-normal text-[#2C2621] editorial-font italic">Inserimento in Blocco</h3>
+        <button onclick="closeBulkModal()" class="text-[#8C7A6B] hover:text-[#2C2621]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <p class="text-xs text-[#6E5E52]">Formato: <code class="bg-[#FAF7F2] px-1.5 py-0.5 rounded border border-[#EBE4D8]">Nome | Categoria | Dosi Base | Ingrediente 1, Ingrediente 2</code></p>
+      <textarea id="bulk-textarea" rows="8" placeholder="Incolla qui le tue ricette..." class="w-full p-4 editorial-input rounded-2xl text-sm font-mono"></textarea>
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" onclick="closeBulkModal()" class="px-5 py-3 bg-[#FAF7F2] hover:bg-[#EBE4D8] text-[#2C2621] text-xs font-bold rounded-2xl border border-[#EBE4D8] transition">Annulla</button>
+        <button type="button" onclick="processBulkRecipes()" class="px-6 py-3 bg-[#2C2621] hover:bg-[#423830] text-[#FAF7F2] text-xs font-bold rounded-2xl shadow-md transition">Importa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-[#FAF7F2] border-t border-[#EBE4D8] py-8 mt-auto text-center text-xs text-[#8C7A6B] editorial-font italic">
+    Good Food, Good Mood &bull; Menu Planner Editoriale 200+
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    const initialRecipes = [
+      // Primi Piatti (65)
+      { name: "Spaghetti alla Carbonara", category: "Primo", baseServings: 4, ingredients: "320g Spaghetti, 150g Guanciale, 4 Uova, 100g Pecorino romano, Pepe nero" },
+      { name: "Pasta alla Norma", category: "Primo", baseServings: 4, ingredients: "350g Pasta, 2 Melanzane, 400g Pomodori pelati, 80g Ricotta salata, Basilico, Aglio, Olio EVO" },
+      { name: "Risotto ai Frutti di Mare", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, 500g Cozze, 500g Vongole, 300g Gamberi, Vino bianco, Aglio, Prezzemolo" },
+      { name: "Trofie al Pesto Genovese", category: "Primo", baseServings: 4, ingredients: "350g Trofie, 80g Basilico fresco, 40g Pinoli, 60g Parmigiano reggiano, Aglio, Olio EVO" },
+      { name: "Lasagne alla Bolognese", category: "Primo", baseServings: 6, ingredients: "300g Sfoglia per lasagne, 400g Macinato di manzo, 500g Passata di pomodoro, 500ml Besciamella, Parmigiano" },
+      { name: "Spaghetti alle Vongole", category: "Primo", baseServings: 4, ingredients: "360g Spaghetti, 1kg Vongole veraci, 2 spicchi Aglio, 1 mazzetto Prezzemolo, 100ml Vino bianco, Olio EVO, Peperoncino" },
+      { name: "Rigatoni all'Amatriciana", category: "Primo", baseServings: 4, ingredients: "350g Rigatoni, 150g Guanciale, 400g Pomodori pelati, 80g Pecorino romano, Peperoncino" },
+      { name: "Penne all'Arrabbiata", category: "Primo", baseServings: 4, ingredients: "350g Penne rigate, 400g Pomodori pelati, 2 spicchi Aglio, Peperoncino fresco, Olio EVO, Prezzemolo" },
+      { name: "Gnocchi alla Sorrentina", category: "Primo", baseServings: 4, ingredients: "600g Gnocchi di patate, 500g Passata di pomodoro, 200g Fior di latte, Parmigiano, Basilico" },
+      { name: "Spaghetti alla Puttanesca", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 400g Pomodori pelati, 50g Olive nere, 30g Capperi, 4 filetti Acciughe, Aglio, Prezzemolo" },
+      { name: "Orecchiette alle Cime di Rapa", category: "Primo", baseServings: 4, ingredients: "350g Orecchiette fresche, 600g Cime di rapa, 4 filetti Acciughe, Aglio, Peperoncino, Olio EVO" },
+      { name: "Pasta e Ceci Cremosa", category: "Primo", baseServings: 4, ingredients: "320g Pasta corta, 400g Ceci lessati, Rosmarino, Aglio, Olio EVO, Passata di pomodoro" },
+      { name: "Minestrone di Verdure", category: "Primo", baseServings: 4, ingredients: "300g Zucchine, 200g Carote, 200g Patate, 150g Sedano, 200g Fagioli borlotti, 150g Verza, Cipolla, Olio EVO" },
+      { name: "Risotto allo Zafferano", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, 1 bustina Zafferano in pistilli, 50g Burro, 80g Parmigiano reggiano, Brodo vegetale, Cipolla, Vino bianco" },
+      { name: "Spaghetti Aglio, Olio e Peperoncino", category: "Primo", baseServings: 4, ingredients: "360g Spaghetti, 3 spicchi Aglio, Olio EVO, Peperoncino fresco, Prezzemolo" },
+      { name: "Spaghetti Cacio e Pepe", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 150g Pecorino romano grattugiato, Pepe nero in grani" },
+      { name: "Risotto ai Funghi Porcini", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, 300g Funghi Porcini freschi, Aglio, Prezzemolo, Brodo vegetale, Burro, Parmigiano" },
+      { name: "Penne alla Vodka", category: "Primo", baseServings: 4, ingredients: "350g Penne, 100g Pancetta affumicata, 100ml Panna da cucina, 200g Passata di pomodoro, 50ml Vodka" },
+      { name: "Pasta alla Carbonara di Mare", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 200g Salmone affumicato o Tonno fresco, 3 Tuorli d'uovo, Pecorino, Pepe" },
+      { name: "Spaghetti alla Nerano", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 500g Zucchine, 150g Provolone del Monaco o Caciocavallo, Basilico, Aglio, Olio EVO" },
+      { name: "Paccheri alla Sorrentina", category: "Primo", baseServings: 4, ingredients: "350g Paccheri, 500g Pomodorini del piennolo, 200g Mozzarella di bufala, Basilico, Olio EVO" },
+      { name: "Risotto alla Milanese con Ossobuco", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, Zafferano, 2 Ossibuchi di vitello, Brodo, Burro, Parmigiano" },
+      { name: "Pasta e Fagioli Tradizionale", category: "Primo", baseServings: 4, ingredients: "300g Pasta mista, 300g Fagioli borlotti secchi o lessati, Sedano, Carota, Cipolla, Pancetta, Rosmarino" },
+      { name: "Pasta con le Sarde", category: "Primo", baseServings: 4, ingredients: "350g Bucatini, 300g Sarde fresche, 200g Finocchietto selvatico, 30g Uva passa, 30g Pinoli, Zafferano, Cipolla" },
+      { name: "Spaghetti alla Gricia", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 200g Guanciale, 100g Pecorino romano, Pepe nero" },
+      { name: "Cannelloni alla Bolognese", category: "Primo", baseServings: 4, ingredients: "8 Cannelloni all'uovo, 300g Ragù di carne, 300ml Besciamella, Parmigiano reggiano" },
+      { name: "Tagliatelle al Ragù Bolognese", category: "Primo", baseServings: 4, ingredients: "350g Tagliatelle all'uovo, 400g Ragù classico alla bolognese, Parmigiano reggiano" },
+      { name: "Zuppa di Farro della Garfagnana", category: "Primo", baseServings: 4, ingredients: "250g Farro perlato, 200g Fagioli secchi, Pomodorini, Aglio, Rosmarino, Olio EVO" },
+      { name: "Gnocchi al Gorgonzola e Noci", category: "Primo", baseServings: 4, ingredients: "600g Gnocchi di patate, 150g Gorgonzola DOP, 50g Noci sgusciate, 50ml Latte o Panna" },
+      { name: "Spaghetti al Limone", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 2 Limoni biologici, 50g Burro, 80g Parmigiano reggiano, Foglie di menta" },
+      { name: "Pasta Zucchine e Gamberetti", category: "Primo", baseServings: 4, ingredients: "350g Pennette, 300g Code di gamberetti, 3 Zucchine medie, Cipollotto, Olio EVO, Vino bianco" },
+      { name: "Risotto alla Zucca e Rosmarino", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, 400g Polpa di zucca, Rosmarino, Brodo vegetale, Burro, Parmigiano" },
+      { name: "Bucatini alla Zingara", category: "Primo", baseServings: 4, ingredients: "350g Bucatini, 300g Pomodori pelati, Peperoni, Olive, Capperi, Acciughe, Aglio" },
+      { name: "Pasta con Crema di Peperoni e Mandorle", category: "Primo", baseServings: 4, ingredients: "350g Fusilli, 3 Peperoni rossi, 50g Mandorle pelate, Aglio, Olio EVO, Basilico" },
+      { name: "Spaghetti alla Chitarra con Polpettine", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti alla chitarra, 200g Mini polpettine di carne, Passata di pomodoro, Cipolla" },
+      { name: "Pasta e Lenticchie Cremosa", category: "Primo", baseServings: 4, ingredients: "320g Pasta mista, 350g Lenticchie secche, Sedano, Carota, Cipolla, Olio EVO, Passata" },
+      { name: "Riso e Piselli alla Veneta", category: "Primo", baseServings: 4, ingredients: "350g Riso Vialone Nano, 400g Piselli novelli freschi, Cipolla, Pancetta, Brodo, Parmigiano" },
+      { name: "Spaghetti alla Crema di Scampi", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 400g Scampi freschi, 100ml Panna o pomodorini, Aglio, Brandy, Prezzemolo" },
+      { name: "Tagliolini al Tartufo", category: "Primo", baseServings: 4, ingredients: "350g Tagliolini all'uovo, 50g Burro di ottima qualità, 40g Tartufo nero grattugiato, Parmigiano" },
+      { name: "Rigatoni alla Villana", category: "Primo", baseServings: 4, ingredients: "350g Rigatoni, Salsiccia, Funghi champignon, Pomodorini, Panna o ricotta, Olio EVO" },
+      { name: "Gnocchi alla Romana con Burro e Salvia", category: "Primo", baseServings: 4, ingredients: "250g Semolino, 1L Latte, 100g Burro, 100g Parmigiano reggiano, Tuorli d'uovo, Noce moscata" },
+      { name: "Spaghetti alla Busara", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 500g Scampi o Gamberi, Pomodori pelati, Aglio, Vino bianco, Peperoncino" },
+      { name: "Pasta alla Norma con Salsiccia", category: "Primo", baseServings: 4, ingredients: "350g Pasta, 2 Melanzane, 200g Salsiccia sbriciolata, Pomodoro, Ricotta salata, Basilico" },
+      { name: "Risotto agli Asparagi", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, 500g Asparagi verdi freschi, Scalogno, Burro, Parmigiano, Brodo" },
+      { name: "Bucatini all'Ortolana", category: "Primo", baseServings: 4, ingredients: "350g Bucatini, Zucchine, Melanzane, Peperoni, Pomodorini, Basilico, Olio EVO" },
+      { name: "Pasta con i Broccoli", category: "Primo", baseServings: 4, ingredients: "350g Pasta corta, 500g Broccoli siciliani, Acciughe, Aglio, Peperoncino, Olio EVO, Pecorino" },
+      { name: "Zuppa di Ceci e Castagne", category: "Primo", baseServings: 4, ingredients: "300g Ceci lessati, 200g Castagne lesse, Rosmarino, Aglio, Olio EVO, Brodo vegetale" },
+      { name: "Tagliatelle ai Funghi Porcini e Salsiccia", category: "Primo", baseServings: 4, ingredients: "350g Tagliatelle, 250g Porcini freschi, 200g Salsiccia, Aglio, Prezzemolo, Olio EVO" },
+      { name: "Spaghetti alle Acciughe e Mollica Atturzata", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 8 filetti Acciughe sott'olio, Pangrattato tostato, Aglio, Olio EVO, Prezzemolo" },
+      { name: "Risotto al Barolo", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, 1 bottiglia Vino Barolo, Cipolla, Burro, Parmigiano reggiano, Brodo" },
+      { name: "Penne alla Zucca e Speck", category: "Primo", baseServings: 4, ingredients: "350g Penne, 350g Polpa di zucca, 120g Speck a listarelle, Cipolla, Olio EVO, Parmigiano" },
+      { name: "Spaghetti alla Tarantina", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 1kg Cozze nere, Pomodorini pelati, Aglio, Prezzemolo, Olio EVO, Peperoncino" },
+      { name: "Gnocchi alla Bava", category: "Primo", baseServings: 4, ingredients: "600g Gnocchi di patate, 200g Fontina DOP, 50ml Latte, Burro, Parmigiano reggiano" },
+      { name: "Pasta con Crema di Carciofi e Pancetta", category: "Primo", baseServings: 4, ingredients: "350g Pasta, 4 Carciofi puliti, 120g Pancetta affumicata, Aglio, Prezzemolo, Olio EVO" },
+      { name: "Risotto al Limone e Timo", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, Scorza e succo di 2 limoni, Timo fresco, Burro, Parmigiano, Brodo" },
+      { name: "Pasta con Ragù di Salsiccia e Finocchietto", category: "Primo", baseServings: 4, ingredients: "350g Fusilli o Paccheri, 400g Salsiccia fresca, Finocchietto selvatico, Pomodoro, Cipolla" },
+      { name: "Spaghetti alle Zucchine e Zafferano", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, 3 Zucchine, 1 bustina Zafferano, Cipollotto, Olio EVO, Parmigiano" },
+      { name: "Rigatoni alla gola di zucca e gorgonzola", category: "Primo", baseServings: 4, ingredients: "350g Rigatoni, 300g Zucca cotta al forno, 120g Gorgonzola dolce, Noci tritate" },
+      { name: "Pasta con Pesto di Pistacchio e Gamberetti", category: "Primo", baseServings: 4, ingredients: "350g Trofie o Trenette, 100g Pesto di pistacchio, 250g Gamberetti, Olio EVO, Aglio" },
+      { name: "Risotto ai Carciofi", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, 4 Carciofi teneri, Scalogno, Vino bianco, Brodo, Parmigiano, Prezzemolo" },
+      { name: "Spaghetti alla Siracusana", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, Acciughe, Pan grattato tostato, Aglio, Olio EVO, Limone grattugiato" },
+      { name: "Pasta e Patate alla Napoletana", category: "Primo", baseServings: 4, ingredients: "300g Pasta mista, 500g Patate, Crosta di parmigiano, Provola affumicata, Cipolla, Sedano" },
+      { name: "Tagliatelle al Limone e Salmone", category: "Primo", baseServings: 4, ingredients: "350g Tagliatelle, 200g Salmone affumicato, Scorza di limone, Panna leggera o robiola, Erba cipollina" },
+      { name: "Risotto al Pomodoro Fresco e Basilico", category: "Primo", baseServings: 4, ingredients: "350g Riso Carnaroli, 500g Pomodori maturi, Basilico, Aglio, Olio EVO, Parmigiano reggiano" },
+      { name: "Spaghetti al Cartoccio di Mare", category: "Primo", baseServings: 4, ingredients: "350g Spaghetti, Frutti di mare misti, Pomodorini, Aglio, Vino bianco, Prezzemolo, Carta forno" },
+
+      // Secondi Piatti (65)
+      { name: "Tagliata di Manzo al Rosmarino", category: "Secondo", baseServings: 2, ingredients: "500g Controfiletto di manzo, Rosmarino, Olio EVO, Sale grosso, Rucola, Parmigiano in scaglie" },
+      { name: "Orata al Cartoccio", category: "Secondo", baseServings: 2, ingredients: "2 Orate intere, 200g Pomodorini ciliegino, Olive taggiasche, Vino bianco, Limone, Olio EVO" },
+      { name: "Polpette al Sugo della Nonna", category: "Secondo", baseServings: 4, ingredients: "500g Carne macinata mista, 1 Uovo, 50g Pane raffermo, 400g Passata di pomodoro, Cipolla" },
+      { name: "Salmone alla Griglia con Erbe", category: "Secondo", baseServings: 2, ingredients: "2 Tranci di salmone, Limone, Prezzemolo, Timo, Olio EVO, Sale, Pepe" },
+      { name: "Frittura Mista di Paranza", category: "Secondo", baseServings: 4, ingredients: "300g Calamari, 300g Gamberi, 200g Triglie o Acciughe, Farina di semola, Olio per friggere, Limone" },
+      { name: "Petto di Pollo al Limone", category: "Secondo", baseServings: 2, ingredients: "400g Petto di pollo, Succo di limone, Farina, 30g Burro, Brodo vegetale, Prezzemolo" },
+      { name: "Seppie con Piselli", category: "Secondo", baseServings: 4, ingredients: "600g Seppie fresche, 400g Piselli novelli, Cipolla, Vino bianco, Passata di pomodoro, Olio EVO" },
+      { name: "Arrosto di Vitello al Forno", category: "Secondo", baseServings: 4, ingredients: "800g Fesa di vitello, Burro, Olio EVO, Rosmarino, Salvia, Vino bianco, Brodo di carne" },
+      { name: "Spiedini di Gamberi e Calamari", category: "Secondo", baseServings: 4, ingredients: "400g Gamberi, 400g Calamari, Pan grattato, Prezzemolo, Limone, Olio EVO, Spiedini" },
+      { name: "Tranci di Tonno in Crosta di Pistacchio", category: "Secondo", baseServings: 2, ingredients: "2 Tranci di tonno fresco, 60g Granella di pistacchio, Olio EVO, Salsa di soia, Limone" },
+      { name: "Involtini di Spada alla Messinese", category: "Secondo", baseServings: 4, ingredients: "500g Fette sottili di pesce spada, Pan grattato, Capperi, Olive, Uva passa, Pinoli, Limone" },
+      { name: "Salsiccia e Peperoni in Padella", category: "Secondo", baseServings: 4, ingredients: "4 Salsicce di maiale, 3 Peperoni rossi e gialli, Cipolla dorata, Olio EVO, Vino bianco" },
+      { name: "Filetto di Branzino al Forno", category: "Secondo", baseServings: 2, ingredients: "2 Filetti di branzino, 300g Patate a fettine sottili, Rosmarino, Olio EVO, Vino bianco" },
+      { name: "Pollo alla Cacciatora", category: "Secondo", baseServings: 4, ingredients: "1 Pollo a pezzi, 400g Pomodori pelati, Vino rosso, Sedano, Carota, Cipolla, Rosmarino" },
+      { name: "Frittata di Zucchine e Cipollotti", category: "Secondo", baseServings: 4, ingredients: "6 Uova fresche, 3 Zucchine, 2 Cipollotti freschi, Parmigiano reggiano, Olio EVO, Sale" },
+      { name: "Cotoletta alla Milanese", category: "Secondo", baseServings: 2, ingredients: "2 Costolette di vitello con osso, 2 Uova, Pan grattato, 80g Burro chiarificato, Sale" },
+      { name: "Ossobuco alla Milanese", category: "Secondo", baseServings: 2, ingredients: "2 Ossibuchi di vitello alti, Brodo, Vino bianco, Farina, Scorza di limone grattugiata, Prezzemolo, Aglio" },
+      { name: "Calamari Ripieni alla Genovese", category: "Secondo", baseServings: 4, ingredients: "4 Calamari grandi, Pangrattato, Acciughe, Capperi, Uova, Prezzemolo, Passata di pomodoro" },
+      { name: "Baccalà alla Vicentina", category: "Secondo", baseServings: 4, ingredients: "800g Stoccafisso ammollato, Latte, Cipolle, Acciughe, Formaggio grana, Farina, Olio EVO" },
+      { name: "Coniglio all'Ischitana", category: "Secondo", baseServings: 4, ingredients: "1 Coniglio a pezzi, Pomodorini del piennolo, Aglio, Peperoncino, Vino bianco, Timo, Olio EVO" },
+      { name: "Bistecca alla Fiorentina", category: "Secondo", baseServings: 2, ingredients: "1 Bistecca di ciccia fiorentina di Chianina da 1kg, Olio EVO, Sale grosso, Pepe nero" },
+      { name: "Pollo al Forno con Patate", category: "Secondo", baseServings: 4, ingredients: "1 Pollo intero, 800g Patate gialle, Rosmarino, Aglio, Olio EVO, Vino bianco" },
+      { name: "Spiedini di Carne Mista", category: "Secondo", baseServings: 4, ingredients: "400g Spezzatino di maiale e manzo, Peperoni, Cipolla, Olio EVO, Alloro, Pan grattato" },
+      { name: "Sgombro al Forno con Patate e Pomodorini", category: "Secondo", baseServings: 2, ingredients: "2 Sgombri interi puliti, 300g Patate, 150g Pomodorini, Origano, Aglio, Olio EVO" },
+      { name: "Involtini di Vitello alla Siciliana", category: "Secondo", baseServings: 4, ingredients: "500g Fettine sottili di vitello, Caciocavallo, Prosciutto cotto o mortadella, Pangrattato, Pinoli" },
+      { name: "Seppie alla Griglia", category: "Secondo", baseServings: 2, ingredients: "500g Seppie fresche pulite, Olio EVO, Succo di limone, Prezzemolo tritato, Aglio, Sale" },
+      { name: "Spezzatino di Manzo con Patate", category: "Secondo", baseServings: 4, ingredients: "600g Spezzatino di manzo, 500g Patate, Carota, Cipolla, Brodo di carne, Olio EVO, Vino rosso" },
+      { name: "Pesce Spada alla Griglia", category: "Secondo", baseServings: 2, ingredients: "2 Tranci di pesce spada, Olio EVO, Limone, Origano, Menta fresca, Capperi" },
+      { name: "Polpette di Tonno e Patate", category: "Secondo", baseServings: 4, ingredients: "300g Tonno sott'olio sgocciolato, 400g Patate lessate, Uovo, Prezzemolo, Pangrattato" },
+      { name: "Fegato alla Veneziana", category: "Secondo", baseServings: 4, ingredients: "500g Fegato di vitello tagliato sottile, 500g Cipolle bianche, Burro, Aceto di mele, Salvia" },
+      { name: "Arista di Maiale al Latte", category: "Secondo", baseServings: 4, ingredients: "700g Arista di maiale, 500ml Latte intero, Burro, Salvia, Olio EVO, Sale, Pepe" },
+      { name: "Code di Rospo in Umido", category: "Secondo", baseServings: 4, ingredients: "600g Code di rospo (rana pescatrice), Passata di pomodoro, Aglio, Prezzemolo, Vino bianco, Olive" },
+      { name: "Frittata di Carciofi", category: "Secondo", baseServings: 4, ingredients: "6 Uova, 3 Carciofi teneri, Cipollotto, Parmigiano reggiano, Olio EVO, Succo di limone" },
+      { name: "Hamburger di Vitello Fatti in Casa", category: "Secondo", baseServings: 4, ingredients: "500g Carne macinata di vitello, Sale, Pepe, Olio EVO, Rosmarino tritato" },
+      { name: "Pollo in Umido con i Piselli", category: "Secondo", baseServings: 4, ingredients: "600g Bocconcini di pollo, 400g Piselli novelli, Cipolla, Olio EVO, Brodo vegetale" },
+      { name: "Insalata di Polpo e Patate", category: "Secondo", baseServings: 4, ingredients: "800g Polpo bollito, 500g Patate lesse, Prezzemolo, Limone, Olio EVO, Aglio, Olive" },
+      { name: "Pollo ai Peperoni", category: "Secondo", baseServings: 4, ingredients: "700g Pollo a pezzi, 4 Peperoni colorati, Aglio, Olio EVO, Vino bianco, Pomodorini" },
+      { name: "Sogliole alla Mugnaia", category: "Secondo", baseServings: 2, ingredients: "2 Sogliole grandi pulite, Farina, 60g Burro, Succo di limone, Prezzemolo, Sale" },
+      { name: "Arrosto di Maiale con Mele", category: "Secondo", baseServings: 4, ingredients: "800g Lonza di maiale, 3 Mele golden, Cipolla, Sidro o vino bianco, Rosmarino, Olio EVO" },
+      { name: "Triglie alla Livornese", category: "Secondo", baseServings: 4, ingredients: "8 Triglie fresche pulite, 400g Pomodori pelati, Aglio, Prezzemolo, Peperoncino, Olio EVO" },
+      { name: "Scaloppine al Vino Bianco", category: "Secondo", baseServings: 2, ingredients: "400g Fettine di vitello, Farina, 50g Burro, 100ml Vino bianco secco, Sale, Pepe" },
+      { name: "Alici Fratte o Dorate", category: "Secondo", baseServings: 4, ingredients: "600g Alici fresche aperte, Uova, Farina, Olio per friggere, Limone, Sale" },
+      { name: "Spezzatino di Tacchino con Carote", category: "Secondo", baseServings: 4, ingredients: "600g Fesa di tacchino a cubetti, 400g Carote a rondelle, Cipolla, Brodo, Olio EVO" },
+      { name: "Branzino al Sale", category: "Secondo", baseServings: 2, ingredients: "1 Branzino intero da 800g, 1.5kg Sale grosso, Albume d'uovo, Rosmarino, Timo" },
+      { name: "Pollo Tandoori alla Casalinga", category: "Secondo", baseServings: 4, ingredients: "700g Cosce di pollo, Yogurt greco, Spezie tandoori o curry, Limone, Aglio, Zenzero" },
+      { name: "Filetti di Platessa Impanati al Forno", category: "Secondo", baseServings: 4, ingredients: "600g Filetti di platessa, Pangrattato, Olio EVO, Limone, Prezzemolo, Sale" },
+      { name: "Involtini di Melanzane e Carne", category: "Secondo", baseServings: 4, ingredients: "2 Melanzane lunghe, 300g Carne macinata, Uovo, Parmigiano, Passata di pomodoro" },
+      { name: "Frittata al Forno con Asparagi", category: "Secondo", baseServings: 4, ingredients: "6 Uova, 300g Asparagi freschi, Parmigiano reggiano, Olio EVO, Sale e pepe" },
+      { name: "Coda alla Vaccinara", category: "Secondo", baseServings: 4, ingredients: "1.2kg Coda di bue, Sedano, Pomodori pelati, Vino rosso, Cipolla, Chiodi di garofano, Olio EVO" },
+      { name: "Totani in Umido con Patate", category: "Secondo", baseServings: 4, ingredients: "700g Totani freschi, 500g Patate, Pomodori pelati, Aglio, Vino bianco, Prezzemolo" },
+      { name: "Brasato al Barolo", category: "Secondo", baseServings: 6, ingredients: "1.2kg Reale di manzo, 1 bottiglia Barolo, Verdure da brodo, Chiodi di garofano, Cannella" },
+      { name: "Spiedini di Pollo e Verdure", category: "Secondo", baseServings: 4, ingredients: "500g Petto di pollo a cubetti, Zucchine, Peperoni, Cipolla rossa, Olio EVO, Origano" },
+      { name: "Filetto di Maiale in Crosta di Erbe", category: "Secondo", baseServings: 4, ingredients: "700g Filetto di maiale, Erbe aromatiche tritate, Senape, Olio EVO, Sale, Pepe" },
+      { name: "Alici in Tortiera alla Napoletana", category: "Secondo", baseServings: 4, ingredients: "600g Alici fresche, Pangrattato, Pomodorini, Capperi, Origano, Aglio, Olio EVO" },
+      { name: "Involtini di Verza e Carne", category: "Secondo", baseServings: 4, ingredients: "8 Foglie di verza sbollentate, 400g Carne macinata mista, Uovo, Parmigiano, Brodo" },
+
+      // Piatti Unici (25)
+      { name: "Parmigiana di Melanzane", category: "Piatto Unico", baseServings: 4, ingredients: "3 Melanzane tonde, 250g Fior di latte, 600g Passata di pomodoro, Parmigiano reggiano, Basilico" },
+      { name: "Pizza Margherita Artigianale", category: "Piatto Unico", baseServings: 2, ingredients: "400g Farina 00, 250ml Acqua, 3g Lievito di birra, 200g Fior di latte, 200g Pelati, Basilico" },
+      { name: "Insalata Caprese", category: "Piatto Unico", baseServings: 2, ingredients: "250g Mozzarella di bufala campana, 4 Pomodori cuore di bue, Basilico fresco, Olio EVO, Origano" },
+      { name: "Panzanella Toscana", category: "Piatto Unico", baseServings: 4, ingredients: "300g Pane toscano raffermo, 4 Pomodori maturi, 1 Cetriolo, Cipolla rossa, Basilico, Aceto, Olio EVO" },
+      { name: "Poke Bowl Mediterraneo", category: "Piatto Unico", baseServings: 2, ingredients: "200g Riso basmati, 200g Ceci croccanti, 1 Avocado, Pomodorini, Feta greca, Cetrioli, Olio EVO" },
+      { name: "Piadina con Crudo e Squacquerone", category: "Piatto Unico", baseServings: 2, ingredients: "2 Piadine romagnole, 100g Prosciutto crudo di Parma, 120g Squacquerone, Rucola fresca" },
+      { name: "Cuscus di Verdure e Ceci", category: "Piatto Unico", baseServings: 4, ingredients: "300g Cuscus precotto, Zucchine, Carote, Peperoni, 300g Ceci lessati, Brodo vegetale, Menta" },
+      { name: "Tortilla di Patate Spagnola", category: "Piatto Unico", baseServings: 4, ingredients: "600g Patate, 6 Uova, 1 Cipolla dorata, Olio EVO, Sale, Pepe nero" },
+      { name: "Focaccia Recco col Formaggio", category: "Piatto Unico", baseServings: 4, ingredients: "400g Farina 00, Acqua, Olio EVO, 400g Formaggio Crescenza o Stracchino fresco" },
+      { name: "Pasta Fredda alla Mediterranea", category: "Piatto Unico", baseServings: 4, ingredients: "350g Fusilli, 200g Pomodorini, 150g Mozzarella, Olive nere, Basilico, 150g Tonno sott'olio" },
+      { name: "Torta Salata con Verdure e Ricotta", category: "Piatto Unico", baseServings: 4, ingredients: "1 rotolo Pasta sfoglia, 250g Ricotta di pecora, 2 Uova, Zucchine e Spinaci saltati, Parmigiano" },
+      { name: "Gauazzetto di Cozze e Crostini", category: "Piatto Unico", baseServings: 2, ingredients: "1kg Cozze fresche, 4 fette Pane cafone tostato, Pomodorini, Aglio, Prezzemolo, Peperoncino" },
+      { name: "Crêpes Salate con Ricotta e Spinaci", category: "Piatto Unico", baseServings: 4, ingredients: "4 Crêpes, 300g Ricotta, 300g Spinaci cotti, Besciamella, Parmigiano reggiano, Noce moscata" },
+      { name: "Insalata di Farro con Verdure Grigliate", category: "Piatto Unico", baseServings: 4, ingredients: "300g Farro perlato, Zucchine, Melanzane, Peperoni grigliati, Feta, Olio EVO, Basilico" },
+      { name: "Club Sandwich Classico", category: "Piatto Unico", baseServings: 2, ingredients: "6 fette Pane in carrè, Petto di pollo grigliato, Bacon croccante, Insalata, Pomodoro, Maionese" },
+      { name: "Piadina Integrale con Tonno e Verdure", category: "Piatto Unico", baseServings: 2, ingredients: "2 Piadine integrali, 160g Tonno, Insalata mista, Pomodorini, Maionese leggera o yogurt" },
+      { name: "Polenta Pasticciata al Forno", category: "Piatto Unico", baseServings: 4, ingredients: "400g Farina di mais per polenta, 300g Ragù di carne, 150g Formaggio filante, Parmigiano" },
+      { name: "Insalata di Pollo Fredda con Avocado", category: "Piatto Unico", baseServings: 4, ingredients: "400g Petto di pollo lessato o grigliato, 1 Avocado, Sedano, Maionese leggera, Limone" },
+      { name: "Bowl di Quinoa con Salmone e Verdure", category: "Piatto Unico", baseServings: 2, ingredients: "180g Quinoa, 200g Salmone affumicato, Cetrioli, Edamame o piselli, Salsa di soia, Olio EVO" },
+      { name: "Tacos Messicani alla Bolognese", category: "Piatto Unico", baseServings: 4, ingredients: "8 Tortillas di mais, 300g Carne macinata speziata, Fagioli neri, Insalata, Cheddar grattugiato" },
+
+      // Contorni (25)
+      { name: "Patate al Forno al Rosmarino", category: "Contorno", baseServings: 4, ingredients: "800g Patate gialle, Rosmarino fresco, Aglio, Olio EVO, Sale grosso, Pepe" },
+      { name: "Caponata Siciliana di Melanzane", category: "Contorno", baseServings: 4, ingredients: "2 Melanzane, Sedano, Cipolla, Olive verdi, Capperi, Aceto di vino bianco, Zucchero, Pelati, Pinoli" },
+      { name: "Zucchine alla Scapece", category: "Contorno", baseServings: 4, ingredients: "4 Zucchine verdi, Aceto di vino bianco, Menta fresca, Aglio, Olio per friggere, Sale" },
+      { name: "Insalata Greca Classica", category: "Contorno", baseServings: 4, ingredients: "200g Feta greca, Cetrioli, Pomodori, Peperone verde, Cipolla rossa, Olive kalamata, Origano, Olio EVO" },
+      { name: "Spinaci Saltati in Padella", category: "Contorno", baseServings: 4, ingredients: "500g Spinaci freschi, Aglio, Olio EVO, Sale, Limone" },
+      { name: "Peperoni Arrostiti al Forno", category: "Contorno", baseServings: 4, ingredients: "4 Peperoni rossi e gialli, Olio EVO, Aglio, Prezzemolo, Sale" },
+      { name: "Fagiolini all'Insalata con Aglio e Basilico", category: "Contorno", baseServings: 4, ingredients: "500g Fagiolini verdi, Aglio, Basilico, Olio EVO, Aceto" },
+      { name: "Carciofi alla Romana", category: "Contorno", baseServings: 4, ingredients: "4 Carciofi romaneschi, Menta, Aglio, Prezzemolo, Olio EVO, Acqua, Limone" },
+      { name: "Finocchi Gratinati al Forno", category: "Contorno", baseServings: 4, ingredients: "3 Finocchi, Besciamella leggera, Parmigiano reggiano, Burro, Sale, Pepe" },
+      { name: "Radicchio Rosso al Forno con Aceto Balsamico", category: "Contorno", baseServings: 4, ingredients: "3 cespi Radicchio di Treviso, Aceto balsamico di Modena, Olio EVO, Sale, Timo" },
+      { name: "Insalata di Finocchi e Arance", category: "Contorno", baseServings: 4, ingredients: "3 Finocchi affettati, 2 Arance pelate a vivo, Olive nere, Olio EVO, Sale, Pepe" },
+      { name: "Purea di Patate Cremosa", category: "Contorno", baseServings: 4, ingredients: "800g Patate, 150ml Latte, 50g Burro, Parmigiano reggiano grattugiato, Noce moscata" },
+      { name: "Verdure Grigliate Miste", category: "Contorno", baseServings: 4, ingredients: "2 Zucchine, 2 Melanzane, 2 Peperoni, Olio EVO, Aglio, Prezzemolo, Aceto balsamico" },
+      { name: "Piselli alla Francese", category: "Contorno", baseServings: 4, ingredients: "500g Piselli novelli, Cipollotti, Lattuga in foglie, Burro, Brodo vegetale, Zucchero" },
+      { name: "Carote Caramellate al Miele", category: "Contorno", baseServings: 4, ingredients: "600g Carote novelle, 30g Burro, 2 cucchiai Miele, Timo fresco, Sale" },
+
+      // Dolci e Altro (18)
+      { name: "Tiramisù Classico", category: "Altro", baseServings: 6, ingredients: "300g Savoiardi, 4 Uova fresche, 500g Mascarpone, 120g Zucchero, Caffè espresso, Cacao amaro in polvere" },
+      { name: "Panna Cotta ai Frutti di Bosco", category: "Altro", baseServings: 4, ingredients: "400ml Panna fresca liquida, 80g Zucchero a velo, 8g Gelatina in fogli, Vaniglia, 200g Frutti di bosco" },
+      { name: "Cannoli Siciliani alla Ricotta", category: "Altro", baseServings: 4, ingredients: "4 Cialde per cannoli, 400g Ricotta di pecora, 100g Zucchero a velo, Gocce di cioccolato fondente" },
+      { name: "Cantucci di Prato con Vin Santo", category: "Altro", baseServings: 6, ingredients: "300g Farina, 200g Zucchero, 2 Uova, 150g Mandorle intere, Burro, Vin Santo" },
+      { name: "Crostata di Marmellata", category: "Altro", baseServings: 6, ingredients: "300g Farina 00, 150g Burro freddo, 150g Zucchero, 2 Uova, 350g Confettura di albicocche o ciliegie" },
+      { name: "Zuppa Inglese", category: "Altro", baseServings: 6, ingredients: "Alchermes, Pan di Spagna, Crema pasticcera gialla e al cioccolato fondente" },
+      { name: "Budino di Latte alla Vaniglia", category: "Altro", baseServings: 4, ingredients: "500ml Latte, 100g Zucchero, 50g Amido di mais, Bacca di vaniglia" },
+      { name: "Frittelle di Mele Tradizionali", category: "Altro", baseServings: 4, ingredients: "3 Mele Renette, 150g Farina, 1 Uovo, 100ml Latte, Zucchero a velo, Olio per friggere" },
+      { name: "Tortino al Cioccolato con Cuore Caldo", category: "Altro", baseServings: 4, ingredients: "150g Cioccolato fondente, 100g Burro, 3 Uova, 80g Zucchero, 40g Farina, Zucchero a velo" },
+      { name: "Ciambellone soffice della Nonna", category: "Altro", baseServings: 8, ingredients: "300g Farina 00, 200g Zucchero, 3 Uova, 100ml Latte, 100ml Olio di semi, 1 bustina Lievito" },
+      { name: "Semifreddo al Torroncino", category: "Altro", baseServings: 6, ingredients: "300g Torroncino di mandorle, 300ml Panna montata, 3 Tuorli d'uovo, 60g Zucchero" }
+    ];
+
+    const daysOfWeek = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+    const mealTypes = [
+      { id: 'lunch', label: 'Pranzo', icon: 'sun', color: 'text-amber-800 bg-amber-50 border border-amber-200' },
+      { id: 'dinner', label: 'Cena', icon: 'moon', color: 'text-indigo-800 bg-indigo-50 border border-indigo-200' }
+    ];
+
+    const defaultBalancedWeekMenu = {
+      "Lunedì_lunch": { dish: "Spaghetti alla Carbonara", servings: 2 },
+      "Lunedì_dinner": { dish: "Orata al Cartoccio", servings: 2 },
+      "Martedì_lunch": { dish: "Pasta e Ceci Cremosa", servings: 2 },
+      "Martedì_dinner": { dish: "Petto di Pollo al Limone", servings: 2 },
+      "Mercoledì_lunch": { dish: "Trofie al Pesto Genovese", servings: 2 },
+      "Mercoledì_dinner": { dish: "Salmone alla Griglia con Erbe", servings: 2 },
+      "Giovedì_lunch": { dish: "Minestrone di Verdure", servings: 2 },
+      "Giovedì_dinner": { dish: "Polpette al Sugo della Nonna", servings: 2 },
+      "Venerdì_lunch": { dish: "Risotto ai Frutti di Mare", servings: 2 },
+      "Venerdì_dinner": { dish: "Insalata Caprese", servings: 2 },
+      "Sabato_lunch": { dish: "Parmigiana di Melanzane", servings: 2 },
+      "Sabato_dinner": { dish: "Tagliata di Manzo al Rosmarino", servings: 2 },
+      "Domenica_lunch": { dish: "Lasagne alla Bolognese", servings: 2 },
+      "Domenica_dinner": { dish: "Frittata di Zucchine e Cipollotti", servings: 2 }
+    };
+
+    const dailyQuotes = {
+      "Lunedì": { quote: "Inizia la settimana con energia: un buon piatto di pasta è la chiave del buon umore.", badge: "Lunedì &bull; Energia & Tradizione" },
+      "Martedì": { quote: "La semplicità è l'ultimo stadio della sofisticazione in cucina.", badge: "Martedì &bull; Sapori Autentici" },
+      "Mercoledì": { quote: "Il buon cibo è il fondamento della vera felicità.", badge: "Mercoledì &bull; Equilibrio a Tavola" },
+      "Giovedì": { quote: "Cucinare non è difficile. Tutto ciò che serve è amore per i dettagli.", badge: "Giovedì &bull; Passione in Cucina" },
+      "Venerdì": { quote: "Il fine settimana si avvicina: concediti un piatto speciale della tradizione.", badge: "Venerdì &bull; Anticipo di Festa" },
+      "Sabato": { quote: "Il sabato è il giorno perfetto per impastare, sperimentare e condividere.", badge: "Sabato &bull; Creatività & Famiglia" },
+      "Domenica": { quote: "La cucina della domenica sa di casa, di famiglia e di ricordi indimenticabili.", badge: "Domenica &bull; Tradizione in Famiglia" }
+    };
+
+    let recipes = JSON.parse(localStorage.getItem('mp_recipes_v15')) || initialRecipes;
+    let calendar = JSON.parse(localStorage.getItem('mp_calendar_v15')) || defaultBalancedWeekMenu;
+    let manualShopping = JSON.parse(localStorage.getItem('mp_manual_shopping_v15')) || [];
+    let checkedShopping = JSON.parse(localStorage.getItem('mp_checked_shopping_v15')) || {};
+    let goalsSettings = JSON.parse(localStorage.getItem('mp_goals_settings_v15')) || {
+      phase: 'Equilibrato',
+      meatTarget: 4,
+      fishTarget: 3,
+      legumeTarget: 3,
+      notes: 'Privilegiare verdure di stagione e olio extravergine d\'oliva'
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initDailyHomeQuote();
+      initGoalsUI();
+      renderCalendar();
+      renderRecipes();
+      renderShoppingList();
+      updateRecipeCount();
+      lucide.createIcons();
+    });
+
+    function initDailyHomeQuote() {
+      const jsDays = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+      const todayName = jsDays[new Date().getDay()];
+      const dayData = dailyQuotes[todayName] || dailyQuotes["Lunedì"];
+
+      document.getElementById('daily-badge').innerHTML = dayData.badge;
+      document.getElementById('daily-quote').innerText = `"${dayData.quote}"`;
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('bg-[#2C2621]', 'text-[#FAF7F2]', 'shadow-sm');
+        el.classList.add('text-[#5C4E42]', 'hover:text-[#2C2621]');
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      if(activeBtn) {
+        activeBtn.classList.remove('text-[#5C4E42]', 'hover:text-[#2C2621]');
+        activeBtn.classList.add('bg-[#2C2621]', 'text-[#FAF7F2]', 'shadow-sm');
+      }
+
+      if(tabId === 'shopping') renderShoppingList();
+      if(tabId === 'goals') updateGoalsAnalysis();
+      lucide.createIcons();
+    }
+
+    function saveData() {
+      localStorage.setItem('mp_recipes_v15', JSON.stringify(recipes));
+      localStorage.setItem('mp_calendar_v15', JSON.stringify(calendar));
+      localStorage.setItem('mp_manual_shopping_v15', JSON.stringify(manualShopping));
+      localStorage.setItem('mp_checked_shopping_v15', JSON.stringify(checkedShopping));
+      localStorage.setItem('mp_goals_settings_v15', JSON.stringify(goalsSettings));
+      updateRecipeCount();
+    }
+
+    function updateRecipeCount() {
+      document.getElementById('recipe-count').innerText = recipes.length;
+    }
+
+    function updateGlobalServings(val) {
+      const num = parseInt(val) || 2;
+      daysOfWeek.forEach(day => {
+        mealTypes.forEach(meal => {
+          const key = `${day}_${meal.id}`;
+          if(!calendar[key]) calendar[key] = { dish: '', servings: num };
+          else calendar[key].servings = num;
+        });
+      });
+      saveData();
+      renderCalendar();
+      renderShoppingList();
+    }
+
+    function loadDefaultBalancedWeek() {
+      if(confirm("Vuoi ripristinare il menu precompilato bilanciato per tutta la settimana?")) {
+        calendar = JSON.parse(JSON.stringify(defaultBalancedWeekMenu));
+        saveData();
+        renderCalendar();
+        renderShoppingList();
+      }
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+      const defaultServings = parseInt(document.getElementById('global-servings').value) || 2;
+
+      daysOfWeek.forEach(day => {
+        const dayCard = document.createElement('div');
+        dayCard.className = "parchment-card p-6 rounded-[2rem] flex flex-col gap-4";
+        
+        let html = `<div class="border-b border-[#EBE4D8] pb-3 flex justify-between items-center">
+          <h3 class="font-bold text-[#2C2621] text-base editorial-font">${day}</h3>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">`;
+
+        mealTypes.forEach(meal => {
+          const key = `${day}_${meal.id}`;
+          if(!calendar[key]) calendar[key] = { dish: '', servings: defaultServings };
+          const mealData = calendar[key];
+
+          html += `
+            <div class="bg-[#FAF7F2] p-4 rounded-2xl border border-[#EBE4D8] space-y-3 flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${meal.color} px-2.5 py-1 rounded-xl">
+                  <i data-lucide="${meal.icon}" class="w-3.5 h-3.5"></i> ${meal.label}
+                </span>
+                <div class="flex items-center gap-1.5 bg-[#FFFFFF] px-2 py-1 rounded-xl border border-[#EBE4D8]">
+                  <span class="text-[10px] text-[#8C7A6B] font-bold"><i data-lucide="users" class="w-3 h-3 inline"></i> Persone:</span>
+                  <input type="number" min="1" max="20" value="${mealData.servings || defaultServings}" onchange="updateMealServings('${day}', '${meal.id}', this.value)" class="w-8 text-center text-xs font-bold editorial-input rounded py-0.5">
+                </div>
+              </div>
+              <div class="space-y-2">
+                <select onchange="selectRecipeForMeal('${day}', '${meal.id}', this.value)" class="text-xs w-full editorial-input rounded-xl px-3 py-2 font-medium">
+                  <option value="">+ Scegli dal ricettario...</option>
+                  ${recipes.map(r => `<option value="${r.name}" ${mealData.dish === r.name ? 'selected' : ''}>${r.name} (Base ${r.baseServings || 4}p)</option>`).join('')}
+                </select>
+                <input type="text" value="${mealData.dish}" placeholder="O scrivi piatto libero..." oninput="updateMealDish('${day}', '${meal.id}', this.value)" class="w-full px-3 py-2 editorial-input rounded-xl text-xs font-medium">
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+        dayCard.innerHTML = html;
+        grid.appendChild(dayCard);
+      });
+      lucide.createIcons();
+    }
+
+    function updateMealDish(day, mealId, value) {
+      const key = `${day}_${mealId}`;
+      if(!calendar[key]) calendar[key] = { servings: 2 };
+      calendar[key].dish = value;
+      saveData();
+      renderShoppingList();
+    }
+
+    function updateMealServings(day, mealId, value) {
+      const key = `${day}_${mealId}`;
+      if(!calendar[key]) calendar[key] = { dish: '' };
+      calendar[key].servings = parseInt(value) || 2;
+      saveData();
+      renderShoppingList();
+    }
+
+    function selectRecipeForMeal(day, mealId, recipeName) {
+      if(!recipeName) return;
+      const key = `${day}_${mealId}`;
+      if(!calendar[key]) calendar[key] = { servings: 2 };
+      calendar[key].dish = recipeName;
+      saveData();
+      renderCalendar();
+      renderShoppingList();
+    }
+
+    function clearWeek() {
+      if(confirm("Vuoi svuotare tutta la pianificazione della settimana?")) {
+        calendar = {};
+        saveData();
+        renderCalendar();
+        renderShoppingList();
+      }
+    }
+
+    function fillRandomWeek() {
+      if(recipes.length === 0) {
+        alert("Il ricettario è vuoto!");
+        return;
+      }
+      const defaultServings = parseInt(document.getElementById('global-servings').value) || 2;
+      daysOfWeek.forEach(day => {
+        mealTypes.forEach(meal => {
+          const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
+          const key = `${day}_${meal.id}`;
+          const currentServings = calendar[key] && calendar[key].servings ? calendar[key].servings : defaultServings;
+          calendar[key] = { dish: randomRecipe.name, servings: currentServings };
+        });
+      });
+      saveData();
+      renderCalendar();
+      renderShoppingList();
+      alert("Menu casuale generato con successo!");
+    }
+
+    function renderRecipes() {
+      const search = document.getElementById('recipe-search').value.toLowerCase();
+      const catFilter = document.getElementById('recipe-category-filter').value;
+      const grid = document.getElementById('recipes-grid');
+      grid.innerHTML = '';
+
+      const filtered = recipes.filter(r => {
+        const matchesSearch = r.name.toLowerCase().includes(search) || r.ingredients.toLowerCase().includes(search);
+        const matchesCat = catFilter === 'all' || r.category === catFilter;
+        return matchesSearch && matchesCat;
+      });
+
+      if(filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-12 text-center text-[#8C7A6B] text-sm">Nessuna ricetta trovata.</div>`;
+        return;
+      }
+
+      filtered.forEach((recipe) => {
+        const realIndex = recipes.indexOf(recipe);
+        const card = document.createElement('div');
+        card.className = "parchment-card p-6 rounded-[2rem] flex flex-col justify-between gap-4";
+        
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex justify-between items-start gap-2">
+              <h3 class="font-bold text-[#2C2621] text-sm leading-snug editorial-font">${recipe.name}</h3>
+              <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl uppercase tracking-wider bg-[#FAF7F2] text-[#5C4E42] border border-[#EBE4D8]">${recipe.category}</span>
+            </div>
+            <div class="text-xs text-[#6E5E52] space-y-1">
+              <p><span class="font-semibold text-[#2C2621]">Dosi base:</span> per ${recipe.baseServings || 4} persone</p>
+              <p class="line-clamp-3"><span class="font-semibold text-[#2C2621]">Ingredienti:</span> ${recipe.ingredients}</p>
+            </div>
+          </div>
+          <div class="flex justify-end gap-1.5 pt-3 border-t border-[#EBE4D8]">
+            <button onclick="editRecipe(${realIndex})" class="p-2 text-[#8C7A6B] hover:text-[#2C2621] hover:bg-[#FAF7F2] rounded-xl transition" title="Modifica"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+            <button onclick="deleteRecipe(${realIndex})" class="p-2 text-[#8C7A6B] hover:text-rose-600 hover:bg-rose-50 rounded-xl transition" title="Elimina"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function openRecipeModal(index = -1) {
+      document.getElementById('recipe-edit-index').value = index;
+      if(index >= 0) {
+        document.getElementById('recipe-modal-title').innerText = "Modifica Ricetta";
+        document.getElementById('recipe-name').value = recipes[index].name;
+        document.getElementById('recipe-category').value = recipes[index].category;
+        document.getElementById('recipe-base-servings').value = recipes[index].baseServings || 4;
+        document.getElementById('recipe-ingredients').value = recipes[index].ingredients;
+      } else {
+        document.getElementById('recipe-modal-title').innerText = "Nuova Ricetta";
+        document.getElementById('recipe-form').reset();
+        document.getElementById('recipe-base-servings').value = 4;
+      }
+      document.getElementById('recipe-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeRecipeModal() {
+      document.getElementById('recipe-modal').classList.add('hidden');
+    }
+
+    function saveRecipe(e) {
+      e.preventDefault();
+      const index = parseInt(document.getElementById('recipe-edit-index').value);
+      const name = document.getElementById('recipe-name').value.trim();
+      const category = document.getElementById('recipe-category').value;
+      const baseServings = parseInt(document.getElementById('recipe-base-servings').value) || 4;
+      const ingredients = document.getElementById('recipe-ingredients').value.trim();
+
+      const newRecipe = { name, category, baseServings, ingredients };
+
+      if(index >= 0) recipes[index] = newRecipe;
+      else recipes.push(newRecipe);
+
+      saveData();
+      closeRecipeModal();
+      renderRecipes();
+      renderCalendar();
+      renderShoppingList();
+    }
+
+    function editRecipe(index) { openRecipeModal(index); }
+    function deleteRecipe(index) {
+      if(confirm(`Vuoi eliminare la ricetta?`)) {
+        recipes.splice(index, 1);
+        saveData();
+        renderRecipes();
+        renderCalendar();
+        renderShoppingList();
+      }
+    }
+
+    function openBulkModal() {
+      document.getElementById('bulk-textarea').value = '';
+      document.getElementById('bulk-modal').classList.remove('hidden');
+    }
+    function closeBulkModal() { document.getElementById('bulk-modal').classList.add('hidden'); }
+
+    function processBulkRecipes() {
+      const text = document.getElementById('bulk-textarea').value.trim();
+      if(!text) return;
+      const lines = text.split('\n');
+      let count = 0;
+      lines.forEach(line => {
+        if(!line.trim()) return;
+        let parts = line.includes('|') ? line.split('|') : line.split(':');
+        if(parts.length >= 2) {
+          const name = parts[0].trim();
+          let category = "Primo";
+          let baseServings = 4;
+          let ingredients = "";
+
+          if(parts.length >= 4) {
+            category = parts[1].trim();
+            baseServings = parseInt(parts[2].trim()) || 4;
+            ingredients = parts[3].trim();
+          } else if(parts.length === 3) {
+            category = parts[1].trim();
+            ingredients = parts[2].trim();
+          } else {
+            ingredients = parts[1].trim();
+          }
+
+          recipes.push({ name, category, baseServings, ingredients });
+          count++;
+        }
+      });
+      if(count > 0) {
+        saveData();
+        renderRecipes();
+        renderCalendar();
+        renderShoppingList();
+        closeBulkModal();
+        alert(`Importate ${count} ricette!`);
+      }
+    }
+
+    function initGoalsUI() {
+      document.getElementById('goal-period-phase').value = goalsSettings.phase;
+      document.getElementById('goal-meat-target').value = goalsSettings.meatTarget;
+      document.getElementById('goal-fish-target').value = goalsSettings.fishTarget;
+      document.getElementById('goal-legume-target').value = goalsSettings.legumeTarget;
+      updatePhaseDescription();
+    }
+
+    function saveGoalsSettings() {
+      goalsSettings.phase = document.getElementById('goal-period-phase').value;
+      goalsSettings.meatTarget = parseInt(document.getElementById('goal-meat-target').value) || 4;
+      goalsSettings.fishTarget = parseInt(document.getElementById('goal-fish-target').value) || 3;
+      goalsSettings.legumeTarget = parseInt(document.getElementById('goal-legume-target').value) || 3;
+      saveData();
+      updatePhaseDescription();
+      updateGoalsAnalysis();
+    }
+
+    function updatePhaseDescription() {
+      const descMap = {
+        'Equilibrato': 'Bilanciamento ideale di carboidrati complessi, verdure e grassi sani.',
+        'Carb-Load': 'Maggiore apporto energetico da pasta, riso e cereali integrali.',
+        'High-Protein': 'Focalizzato su carni bianche, rosse e fonti proteiche.',
+        'Fish-Week': 'Prevalenza di piatti a base di pesce azzurro e crostacei.',
+        'Detox': 'Prevalenza di verdure, zuppe, legumi e piatti leggeri.'
+      };
+      document.getElementById('goal-phase-desc').innerText = descMap[goalsSettings.phase] || '';
+    }
+
+    function updateGoalsAnalysis() {
+      const container = document.getElementById('goals-analysis-container');
+      let totalMeals = 0, meatCount = 0, fishCount = 0, legumeCount = 0;
+
+      daysOfWeek.forEach(day => {
+        mealTypes.forEach(meal => {
+          const key = `${day}_${meal.id}`;
+          const mealData = calendar[key];
+          if(mealData && mealData.dish) {
+            totalMeals++;
+            const foundRec = recipes.find(r => r.name.toLowerCase() === mealData.dish.toLowerCase());
+            if(foundRec) {
+              const ing = foundRec.ingredients.toLowerCase();
+              if(foundRec.category === 'Secondo' && (ing.includes('carne') || ing.includes('manzo') || ing.includes('pollo') || ing.includes('maiale') || ing.includes('salsiccia') || ing.includes('guanciale'))) meatCount++;
+              if(foundRec.category === 'Secondo' && (ing.includes('pesce') || ing.includes('orata') || ing.includes('salmone') || ing.includes('tonno') || ing.includes('cozze') || ing.includes('vongole') || ing.includes('gamberi'))) fishCount++;
+              if(ing.includes('ceci') || ing.includes('fagioli') || ing.includes('lenticchie') || ing.includes('piselli')) legumeCount++;
+            }
+          }
+        });
+      });
+
+      const meatStatus = meatCount <= goalsSettings.meatTarget ? `<span class="text-emerald-700 font-bold">In target (${meatCount}/${goalsSettings.meatTarget})</span>` : `<span class="text-amber-700 font-bold">Superato (${meatCount}/${goalsSettings.meatTarget})</span>`;
+      const fishStatus = fishCount >= goalsSettings.fishTarget ? `<span class="text-emerald-700 font-bold">Ottimale (${fishCount}/${goalsSettings.fishTarget})</span>` : `<span class="text-amber-700 font-bold">Sotto target (${fishCount}/${goalsSettings.fishTarget})</span>`;
+      const legumeStatus = legumeCount >= goalsSettings.legumeTarget ? `<span class="text-emerald-700 font-bold">Ottimale (${legumeCount}/${goalsSettings.legumeTarget})</span>` : `<span class="text-amber-700 font-bold">Sotto target (${legumeCount}/${goalsSettings.legumeTarget})</span>`;
+
+      container.innerHTML = `
+        <div class="bg-[#FAF7F2] p-5 rounded-2xl border border-[#EBE4D8] space-y-1">
+          <span class="text-xs text-[#6E5E52] font-medium">Pasti Pianificati</span>
+          <p class="text-xl font-bold text-[#2C2621]">${totalMeals} / 14</p>
+        </div>
+        <div class="bg-[#FAF7F2] p-5 rounded-2xl border border-[#EBE4D8] space-y-1">
+          <span class="text-xs text-[#6E5E52] font-medium">Consumo Carne</span>
+          <p class="text-sm font-bold text-[#2C2621]">${meatStatus}</p>
+        </div>
+        <div class="bg-[#FAF7F2] p-5 rounded-2xl border border-[#EBE4D8] space-y-1">
+          <span class="text-xs text-[#6E5E52] font-medium">Consumo Pesce</span>
+          <p class="text-sm font-bold text-[#2C2621]">${fishStatus}</p>
+        </div>
+        <div class="bg-[#FAF7F2] p-5 rounded-2xl border border-[#EBE4D8] space-y-1">
+          <span class="text-xs text-[#6E5E52] font-medium">Consumo Legumi</span>
+          <p class="text-sm font-bold text-[#2C2621]">${legumeStatus}</p>
+        </div>
+      `;
+    }
+
+    function renderShoppingList() {
+      const autoListContainer = document.getElementById('auto-shopping-list');
+      const manualListContainer = document.getElementById('manual-shopping-list');
+      const aggregatedItems = {};
+
+      daysOfWeek.forEach(day => {
+        mealTypes.forEach(meal => {
+          const key = `${day}_${meal.id}`;
+          const mealData = calendar[key];
+          if(mealData && mealData.dish) {
+            const foundRec = recipes.find(r => r.name.toLowerCase() === mealData.dish.toLowerCase());
+            
+            const targetServings = parseInt(mealData.servings) || 2;
+            const baseServings = foundRec && foundRec.baseServings ? parseInt(foundRec.baseServings) : 4;
+            
+            const multiplier = targetServings / baseServings;
+            const ingredientsText = foundRec && foundRec.ingredients ? foundRec.ingredients : mealData.dish;
+
+            ingredientsText.split(',').forEach(ingStr => {
+              const cleanIng = ingStr.trim();
+              if(!cleanIng) return;
+
+              const match = cleanIng.match(/^([\d.,]+)\s*([a-zA-Zà-ùÀ-Ù]*)\s+(.*)$/);
+              
+              if(match) {
+                let rawNum = parseFloat(match[1].replace(',', '.'));
+                let unit = match[2];
+                let namePart = match[3];
+                
+                if(!isNaN(rawNum)) {
+                  let scaledVal = Math.round((rawNum * multiplier) * 10) / 10;
+                  const mapKey = `${unit}_${namePart}`.toLowerCase().trim();
+                  
+                  if(!aggregatedItems[mapKey]) {
+                    aggregatedItems[mapKey] = { name: namePart, total: scaledVal, unit: unit };
+                  } else {
+                    aggregatedItems[mapKey].total += scaledVal;
+                  }
+                } else {
+                  addSimpleIngredient(aggregatedItems, cleanIng);
+                }
+              } else {
+                const match2 = cleanIng.match(/^([\d.,]+)\s+(.*)$/);
+                if(match2) {
+                  let rawNum = parseFloat(match2[1].replace(',', '.'));
+                  let namePart = match2[2];
+                  if(!isNaN(rawNum)) {
+                    let scaledVal = Math.round(rawNum * multiplier);
+                    const mapKey = `_${namePart}`.toLowerCase().trim();
+                    if(!aggregatedItems[mapKey]) {
+                      aggregatedItems[mapKey] = { name: namePart, total: scaledVal, unit: '' };
+                    } else {
+                      aggregatedItems[mapKey].total += scaledVal;
+                    }
+                  } else {
+                    addSimpleIngredient(aggregatedItems, cleanIng);
+                  }
+                } else {
+                  addSimpleIngredient(aggregatedItems, cleanIng);
+                }
+              }
+            });
+          }
+        });
+      });
+
+      autoListContainer.innerHTML = '';
+      const keys = Object.keys(aggregatedItems);
+      if(keys.length === 0) {
+        autoListContainer.innerHTML = `<p class="text-xs text-[#8C7A6B] italic">Nessun ingrediente in lista. Aggiungi dei piatti nel calendario!</p>`;
+      } else {
+        keys.forEach(k => {
+          const item = aggregatedItems[k];
+          let displayLabel = '';
+          if(item.total && item.total > 0) {
+            displayLabel = `${item.total}${item.unit ? ' ' + item.unit : ''} ${item.name}`;
+          } else {
+            displayLabel = item.name;
+          }
+
+          const isChecked = checkedShopping[`auto_${k}`] || false;
+          
+          autoListContainer.innerHTML += `
+            <label class="flex items-center justify-between p-3 bg-[#FAF7F2] rounded-2xl border border-[#EBE4D8] cursor-pointer hover:bg-[#EBE4D8]/50 transition">
+              <div class="flex items-center gap-3">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheckedShopping('auto_${k}')" class="w-4 h-4 text-[#2C2621] rounded border-[#D4C5AD] focus:ring-[#2C2621]">
+                <span class="text-xs font-medium ${isChecked ? 'line-through text-[#8C7A6B]' : 'text-[#2C2621]'}">${displayLabel}</span>
+              </div>
+            </label>
+          `;
+        });
+      }
+
+      manualListContainer.innerHTML = '';
+      if(manualShopping.length === 0) {
+        manualListContainer.innerHTML = `<p class="text-xs text-[#8C7A6B] italic">Nessun articolo extra aggiunto.</p>`;
+      } else {
+        manualShopping.forEach((item, index) => {
+          const isChecked = checkedShopping[`manual_${index}`] || false;
+          manualListContainer.innerHTML += `
+            <div class="flex items-center justify-between p-3 bg-[#FAF7F2] rounded-2xl border border-[#EBE4D8]">
+              <label class="flex items-center gap-3 cursor-pointer flex-1">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheckedShopping('manual_${index}')" class="w-4 h-4 text-[#2C2621] rounded border-[#D4C5AD] focus:ring-[#2C2621]">
+                <span class="text-xs font-medium ${isChecked ? 'line-through text-[#8C7A6B]' : 'text-[#2C2621]'}">${item}</span>
+              </label>
+              <button onclick="removeManualShopping(${index})" class="text-[#8C7A6B] hover:text-rose-600 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </div>
+          `;
+        });
+      }
+      lucide.createIcons();
+    }
+
+    function addSimpleIngredient(map, name) {
+      const mapKey = `_${name}`.toLowerCase().trim();
+      if(!map[mapKey]) {
+        map[mapKey] = { name: name, total: 0, unit: '' };
+      }
+    }
+
+    function addManualShoppingItem() {
+      const input = document.getElementById('manual-shopping-input');
+      const val = input.value.trim();
+      if(val) {
+        manualShopping.push(val);
+        input.value = '';
+        saveData();
+        renderShoppingList();
+      }
+    }
+
+    function removeManualShopping(index) {
+      manualShopping.splice(index, 1);
+      saveData();
+      renderShoppingList();
+    }
+
+    function toggleCheckedShopping(key) {
+      checkedShopping[key] = !checkedShopping[key];
+      saveData();
+      renderShoppingList();
+    }
+
+    function clearCheckedShopping() {
+      Object.keys(checkedShopping).forEach(k => {
+        if(checkedShopping[k]) delete checkedShopping[k];
+      });
+      saveData();
+      renderShoppingList();
+    }
+
+    function clearAllShopping() {
+      if(confirm("Svuotare gli articoli extra?")) {
+        manualShopping = [];
+        saveData();
+        renderShoppingList();
+      }
+    }
+  </script>
+</body>
+</html>
